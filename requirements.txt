@@ -2,3 +2,4 @@ streamlit
 pymupdf
 pymongo
 python-dotenv
+sentence-transformers
