@@ -3,3 +3,4 @@ pymupdf
 pymongo
 python-dotenv
 sentence-transformers
+google-genai
