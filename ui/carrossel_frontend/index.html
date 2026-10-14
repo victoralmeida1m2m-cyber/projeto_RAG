@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    html, body { margin:0; padding:0; background:#0b0c10; color:#f4f4ee; }
+    edital-carousel {
+      --ef-bg: #101218;
+      --ef-text: #f4f4ee;
+      --ef-accent: #c7ff4d;
+      display:block;
+      width:100%;
+    }
+  </style>
+  <script src="./edital-carousel.js" defer></script>
+</head>
+<body>
+  <edital-carousel id="biblioteca" action-label="Consultar edital"></edital-carousel>
+  <script>
+  (() => {
+    "use strict";
+    const component = document.getElementById("biblioteca");
+    let sequence = 0;
+
+    function post(type, extra = {}) {
+      window.parent.postMessage({isStreamlitMessage:true, type, ...extra}, "*");
+    }
+
+    function setHeight() {
+      post("streamlit:setFrameHeight", {height: Math.ceil(document.body.scrollHeight + 8)});
+    }
+
+    component.addEventListener("edital-select", (event) => {
+      const id = event.detail && event.detail.item && event.detail.item.id;
+      if (typeof id !== "string" || !id) return;
+      sequence += 1;
+      post("streamlit:setComponentValue", {
+        value: {id, event_token: `${Date.now()}-${sequence}`},
+        dataType: "json"
+      });
+    });
+
+    window.addEventListener("message", (event) => {
+      if (event.source !== window.parent) return;
+      const message = event.data;
+      if (!message || message.type !== "streamlit:render") return;
+      const args = message.args || {};
+      component.items = Array.isArray(args.items) ? args.items : [];
+      component.setAttribute("action-label", "Consultar edital");
+      requestAnimationFrame(setHeight);
+    });
+
+    if (typeof ResizeObserver !== "undefined") {
+      new ResizeObserver(setHeight).observe(document.body);
+    }
+    post("streamlit:componentReady", {apiVersion:1});
+    window.addEventListener("load", setHeight);
+  })();
+  </script>
+</body>
+</html>
