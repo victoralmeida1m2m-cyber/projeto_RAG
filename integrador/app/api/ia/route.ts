@@ -13,9 +13,9 @@ export async function POST(req: Request) {
   const chave=process.env.GEMINI_API_KEY;
   if(!chave) return NextResponse.json({erro:'GEMINI_API_KEY ainda não está configurada na Vercel.'},{status:503});
   const sql=db();
-  const editais=await sql.query("SELECT id,concurso,cargo FROM editais WHERE id=$1 AND status='publicado'",[id]);
+  const editais=await sql`SELECT id,concurso,cargo FROM editais WHERE id=${id} AND status='publicado'`;
   if(!editais.length)return NextResponse.json({erro:'Edital inexistente ou arquivado.'},{status:404});
-  const partes=await sql.query("SELECT pagina,texto,ts_rank(to_tsvector('portuguese',texto),plainto_tsquery('portuguese',$2)) AS relevancia FROM trechos WHERE edital_id=$1 ORDER BY relevancia DESC,pagina ASC LIMIT 5",[id,pergunta]);
+  const partes=await sql`SELECT pagina,texto,ts_rank(to_tsvector('portuguese',texto),plainto_tsquery('portuguese',${pergunta})) AS relevancia FROM trechos WHERE edital_id=${id} ORDER BY relevancia DESC,pagina ASC LIMIT 5`;
   if(!partes.length)return NextResponse.json({erro:'Edital ainda não possui trechos indexados.'},{status:422});
   const fontes=partes.map((p,i)=>({numero:i+1,pagina:Number(p.pagina),texto:String(p.texto).slice(0,1300)}));
   const contexto=fontes.map(f=>'['+f.numero+'] Página PDF '+f.pagina+': '+f.texto).join('\n\n');
@@ -30,7 +30,7 @@ export async function POST(req: Request) {
   const abstencao=/não encontrei evidências suficientes/i.test(resposta);
   const citacoesValidas=citacoes.length>0&&citacoes.every(n=>Number.isSafeInteger(n)&&n>=1&&n<=fontes.length);
   const final=citacoesValidas||abstencao?resposta:'Não consegui validar as referências da resposta. Confira o documento original.';
-  await sql.query('INSERT INTO consultas(edital_id,pergunta,resposta) VALUES($1,$2,$3)',[id,pergunta,final]);
+  await sql`INSERT INTO consultas(edital_id,pergunta,resposta) VALUES(${id},${pergunta},${final})`;
   return NextResponse.json({resposta:final,fontes,validacao:{citacoesValidas,abstencao}});
  }catch(e){return falha(e,'Não foi possível concluir a consulta à IA.')}
 }
