@@ -6,7 +6,7 @@ Esta versão acadêmica adapta o Edital Fácil original para **React (Next.js)**
 Cadastrar um edital fictício em PDF → extrair trechos → salvar no PostgreSQL → listar na interface React → recarregar a página (dados persistem) → consultar com IA real e fontes → arquivar ou excluir. O comparador de PDFs é funcionalidade complementar.
 
 ## Requisitos acadêmicos
-- React com quatro áreas navegáveis: Biblioteca, Cadastro, Assistente IA e Comparador.
+- React com biblioteca pública, assistente IA com limite, comparador e cadastro restrito a administradores. Página `/admin` para login.
 - Formulários, listagem persistente, mensagens de sucesso/erro, carregamento, responsividade e foco visível.
 - Next.js Route Handlers: GET/POST de editais; GET/PATCH/DELETE por ID; POST de IA e comparação.
 - Neon PostgreSQL: 3 tabelas (editais, trechos, consultas), 2 FKs, PKs, CHECK/NOT NULL/UNIQUE e índices.
@@ -32,7 +32,11 @@ Copie .env.example para .env.local e configure as variáveis abaixo somente no a
 | DATABASE_URL | URL privada do PostgreSQL Neon com SSL |
 | XAI_API_KEY | Chave da API xAI com créditos e permissão para o modelo |
 | XAI_MODEL | Nome do modelo disponível na xAI; padrão grok-4 |
-| ADMIN_WRITE_KEY | Segredo privado de 16+ caracteres para operações de escrita e consultas IA |
+| ADMIN_WRITE_KEY | Código inicial de ativação do primeiro administrador, utilizado uma única vez |
+
+A autenticação agora usa as tabelas `admin_users`, `admin_sessions` e `request_limits` no Neon. Ative a conta apenas uma vez em `/admin` usando o código inicial `ADMIN_WRITE_KEY` e escolha seu próprio e-mail e senha (12+ caracteres). Após a ativação, entre sempre pelo login — a chave técnica não aparece na tela principal. A senha é armazenada usando scrypt com salt aleatório, a sessão usa cookie HttpOnly + Secure e expira em 12h. O login permite no máximo 7 tentativas por 15 minutos por combinação de IP/e-mail.
+
+Público: leitura de editais publicados, comparador e até 3 perguntas Grok por IP em 24 horas, com limite geral de 50 perguntas por 24 horas para conter custo. Em produção real, adicionar CAPTCHA, autenticação para visitantes, políticas de privacidade, medição de gastos, proteção contra múltiplos IPs e observabilidade. Essas cotas não garantem custo zero.
 
 Execute sql/schema.sql no Neon. Abra /api/health para confirmar banco conectado.
 
@@ -51,4 +55,4 @@ E1 GitHub e commits dos três participantes; E2 persistência após F5; E3 esque
 O uso da API da xAI pode gerar cobrança por tokens e depende de saldo/créditos. A assinatura do aplicativo Grok, quando houver, não substitui necessariamente o acesso à API.
 
 ## Segurança e limitações
-Aceita PDFs com texto selecionável, até 4 MB/150 páginas, sem OCR. Envie apenas dados fictícios ou totalmente públicos. A validação das referências é numérica, não uma prova de precisão factual. O comparador é aproximado. O segredo de demonstração não é armazenado no navegador; para produção real implemente autenticação individual, rate limit, quotas, controles de upload e monitoramento. O projeto não substitui editais oficiais.
+Aceita PDFs com texto selecionável, até 4 MB/150 páginas, sem OCR. Envie apenas dados fictícios ou totalmente públicos. A validação das referências é numérica, não uma prova de precisão factual. O comparador é aproximado. A chave inicial é utilizada apenas na configuração de conta. O administrador usa login com e-mail e senha; para produção real implemente CAPTCHA, recuperação de conta, políticas contra ataques distribuídos, quotas por usuário, controles de upload e monitoramento. O projeto não substitui editais oficiais.

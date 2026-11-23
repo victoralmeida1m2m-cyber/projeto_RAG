@@ -13,7 +13,7 @@ consultas: PK id, FK edital_id, pergunta, resposta, criado_em.
 Cada relação usa FK com ON DELETE CASCADE. Há CHECK, NOT NULL, UNIQUE e índices. O cadastro de edital e trechos é atômico via CTE. Consultas e plano de execução estão em sql/consultas_avaliacao.sql.
 
 ## React e API
-Quatro áreas funcionais: Biblioteca, Cadastro, IA, Comparador. Formularios reais gravam e consultam dados persistidos (F5); existem feedbacks, mensagens de erro, carregamento e layout responsivo. Operações de escrita exigem chave de demonstração.
+Quatro áreas funcionais: Biblioteca, Cadastro, IA, Comparador. Formularios reais gravam e consultam dados persistidos (F5); existem feedbacks, mensagens de erro, carregamento e layout responsivo. Operações de escrita exigem login com conta administrativa. Senhas scrypt+salt e sessões HttpOnly no PostgreSQL; o código inicial só permite ativar a primeira conta.
 
 ## IA
 Recupera até 5 trechos por busca textual SQL (to_tsvector/ts_rank), envia ao Grok, valida índices de citações ou abstenção e persiste o histórico. Isso não equivale a busca vetorial. A verificação numérica das fontes não prova a exatidão semântica.
@@ -23,3 +23,6 @@ E1 commits do trio, E2 cadastro e F5, E3 JOIN real/diagrama, E4 EXPLAIN antes/de
 
 ## Integrantes
 Inserir os três nomes e contribuições efetivas antes da entrega de 04/12/2026.
+
+## Perfis e cotas de uso
+Visitantes têm acesso somente a editais publicados, comparação e consultas Grok limitadas a 3/IP por 24h. O sistema aplica também teto global de 50 chamadas por 24h. Administradores entram com e-mail e senha, podem cadastrar/arquivar/excluir e trocar a senha. Cookies HttpOnly/SameSite e validação de origem reduzem riscos comuns; login inicial usa código de ativação do ambiente.

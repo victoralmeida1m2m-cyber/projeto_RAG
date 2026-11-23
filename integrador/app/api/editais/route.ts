@@ -1,18 +1,22 @@
 import { db } from '@/lib/db';
 import { quebrarTrechos, lerPdf } from '@/lib/pdf';
-import { falha, naoAutorizado } from '@/lib/responses';
+import { falha } from '@/lib/responses';
+import { currentAdmin,validOrigin } from '@/lib/auth';
 import { NextResponse } from 'next/server';
 export const runtime = 'nodejs';
 export const maxDuration = 60;
-export async function GET() {
+export async function GET(req: Request) {
  try {
   const sql = db();
-  const rows = await sql`SELECT e.id, e.concurso, e.cargo, e.nome_arquivo, e.status, e.total_paginas, e.criado_em, (SELECT COUNT(*)::int FROM trechos t WHERE t.edital_id=e.id) AS total_trechos FROM editais e ORDER BY e.criado_em DESC LIMIT 100`;
+  const admin=await currentAdmin(req);
+  const rows = await sql`SELECT e.id, e.concurso, e.cargo, e.nome_arquivo, e.status, e.total_paginas, e.criado_em, (SELECT COUNT(*)::int FROM trechos t WHERE t.edital_id=e.id) AS total_trechos FROM editais e WHERE (${!!admin} OR e.status='publicado') ORDER BY e.criado_em DESC LIMIT 100`;
   return NextResponse.json({editais:rows});
  } catch (e) { return falha(e, 'Erro ao consultar editais.'); }
 }
 export async function POST(req: Request) {
- if (naoAutorizado(req)) return NextResponse.json({erro:'Chave administrativa inválida.'},{status:403});
+ if (!validOrigin(req)) return NextResponse.json({erro:'Origem não autorizada.'},{status:403});
+ const admin=await currentAdmin(req);
+ if (!admin) return NextResponse.json({erro:'Apenas administradores podem cadastrar. Entre na sua conta.'},{status:401});
  try {
   const form = await req.formData();
   const concurso=String(form.get('concurso')??'').trim();

@@ -1,0 +1,24 @@
+
+/* Área de acesso restrito */
+.topbar .outline-btn{display:inline-flex;text-decoration:none;gap:8px}
+.admin-page{width:min(840px,92%);margin:0 auto;padding:62px 0 75px}
+.admin-page h1{font-size:clamp(37px,6vw,69px);line-height:1;letter-spacing:-3px;margin:25px 0}
+.admin-page h1 em{font-style:normal;color:#cffa73}
+.admin-page .lead{margin-bottom:32px}
+.admin-page .form-card{margin-top:16px}
+.admin-title{display:flex;align-items:center;gap:14px}
+.admin-title svg{color:#cdfa65}
+.admin-title h2{font-size:23px;margin:0 0 7px;letter-spacing:-.5px}
+.admin-title p{color:#aab9a5;margin:0;font-size:13px;overflow-wrap:anywhere}
+.admin-fields{display:grid;gap:18px}
+.admin-fields label{display:grid;gap:10px;font-size:13px;font-weight:700;color:#d5e1cd}
+.admin-fields input{background:#0e160e;border:1px solid #43523f;border-radius:10px;color:#f5f7ef;padding:14px;width:100%}
+.admin-content{display:grid;grid-template-columns:1fr;gap:13px}
+.admin-content .form-card{margin:0}
+.admin-buttons{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.admin-buttons .outline-btn{display:inline-flex}
+.notice.info{background:#1c261a;color:#bfdcaf;border:1px solid #455b40}
+.member-bar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:24px 0;padding:15px 18px;border:1px solid #3f4b3a;border-radius:14px;background:#151d16}
+.member-bar .role{display:flex;align-items:center;gap:10px;color:#cfeeb2;font-size:13px;line-height:1.5}
+.member-bar a{text-decoration:none;color:#d1ff88;border:1px solid #536e40;border-radius:8px;padding:10px 14px;font-size:12px;font-weight:800;white-space:nowrap}
+@media(max-width:600px){.admin-page{padding-top:32px}.member-bar{align-items:stretch;flex-direction:column}.admin-page .admin-title h2{font-size:20px}}

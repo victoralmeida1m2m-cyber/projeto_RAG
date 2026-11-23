@@ -25,3 +25,24 @@ CREATE TABLE IF NOT EXISTS consultas (
 );
 CREATE INDEX IF NOT EXISTS idx_editais_status_criado ON editais(status,criado_em DESC);
 CREATE INDEX IF NOT EXISTS idx_trechos_edital_pagina ON trechos(edital_id,pagina);
+
+-- Autenticação administrativa e limites antiabuso (sem alterar os registros existentes)
+CREATE TABLE IF NOT EXISTS admin_users (
+ id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ email VARCHAR(254) NOT NULL UNIQUE,
+ password_hash TEXT NOT NULL,
+ singleton SMALLINT NOT NULL DEFAULT 1 UNIQUE CHECK(singleton=1),
+ criado_em TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE TABLE IF NOT EXISTS admin_sessions (
+ token_hash CHAR(64) PRIMARY KEY,
+ admin_id BIGINT NOT NULL REFERENCES admin_users(id) ON DELETE CASCADE,
+ criado_em TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+ expira_em TIMESTAMPTZ NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_admin_sessions_expira ON admin_sessions(expira_em);
+CREATE TABLE IF NOT EXISTS request_limits (
+ chave CHAR(64) PRIMARY KEY,
+ janela_inicio TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+ acessos INTEGER NOT NULL DEFAULT 1 CHECK(acessos>=1)
+);
