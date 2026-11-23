@@ -44,8 +44,25 @@ export async function POST(req: Request) {
    cache:'no-store'
   });
   if(!ai.ok){
-   console.error('xAI HTTP',ai.status);
-   return NextResponse.json({erro:'Serviço Grok indisponível. Confira a chave xAI, os créditos e o modelo autorizado.'},{status:502});
+   // Não imprimir chaves, prompts nem o corpo bruto da resposta do fornecedor nos logs.
+   let tipo='', codigo='', detalhes='';
+   try{
+    const respostaErro=await ai.json();
+    const erro=respostaErro?.error;
+    tipo=String(erro?.type??'').replace(/[^a-zA-Z0-9_-]/g,'').slice(0,60);
+    codigo=String(erro?.code??'').replace(/[^a-zA-Z0-9_-]/g,'').slice(0,60);
+    const texto=String(erro?.message??'').toLowerCase();
+    if(/credit|balance|billing|insufficient|payment|quota/.test(texto))detalhes='creditos';
+    else if(/model|not.allowed|permission|access|forbidden/.test(texto))detalhes='permissoes';
+   }catch{}
+   console.error('xAI HTTP',ai.status,'tipo',tipo,'codigo',codigo,'categoria',detalhes||'nao_identificada');
+   const erro=ai.status===401?'A xAI não reconheceu a chave da API (HTTP 401). Gere outra chave e atualize XAI_API_KEY na Vercel.':
+    ai.status===402?'A xAI indicou um problema de pagamento ou créditos (HTTP 402). Verifique o saldo da API na conta xAI.':
+    ai.status===403?'A xAI recusou o acesso (HTTP 403). Verifique os créditos da API, a habilitação da conta e a permissão para usar o modelo '+modelo+'.':
+    ai.status===404?'A xAI não encontrou o modelo configurado (HTTP 404). Revise XAI_MODEL na Vercel.':
+    ai.status===429?'O limite da API xAI foi atingido (HTTP 429). Tente novamente mais tarde.':
+    'A API do Grok retornou HTTP '+ai.status+'. Confira o painel da xAI e os logs da Vercel.';
+   return NextResponse.json({erro,codigo:'XAI_'+ai.status,categoria:detalhes||null},{status:502});
   }
   const data=await ai.json();
   const resposta=String(data.choices?.[0]?.message?.content??'').trim();
