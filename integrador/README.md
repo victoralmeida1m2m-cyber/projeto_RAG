@@ -1,6 +1,6 @@
 # Edital Fácil — Projeto Integrador PIT (2026)
 
-Esta versão acadêmica adapta o Edital Fácil original para **React (Next.js)** + **PostgreSQL/Neon** + **Grok (xAI)** + **Vercel**. O projeto original em Python/Streamlit/MongoDB com RAG vetorial continua preservado na raiz deste repositório. A nova aplicação fica isolada no diretório integrador.
+Esta versão acadêmica adapta o Edital Fácil original para **React (Next.js)** + **PostgreSQL/Neon** + **GroqCloud (inferência de modelos de terceiros)** + **Vercel**. O projeto original em Python/Streamlit/MongoDB com RAG vetorial continua preservado na raiz deste repositório. A nova aplicação fica isolada no diretório integrador.
 
 ## Objetivo e fluxo completo
 Cadastrar um edital fictício em PDF → extrair trechos → salvar no PostgreSQL → listar na interface React → recarregar a página (dados persistem) → consultar com IA real e fontes → arquivar ou excluir. O comparador de PDFs é funcionalidade complementar.
@@ -11,7 +11,7 @@ Cadastrar um edital fictício em PDF → extrair trechos → salvar no PostgreSQ
 - Next.js Route Handlers: GET/POST de editais; GET/PATCH/DELETE por ID; POST de IA e comparação.
 - Neon PostgreSQL: 3 tabelas (editais, trechos, consultas), 2 FKs, PKs, CHECK/NOT NULL/UNIQUE e índices.
 - SQL: JOIN, agregação e EXPLAIN documentados em sql/consultas_avaliacao.sql.
-- Grok chamado no servidor, com verificação estrutural de citações e gravação do histórico.
+- GroqCloud chamado no servidor, com verificação estrutural de citações e gravação do histórico.
 - GitHub, documentação e Vercel. Evidências reais e participação dos três integrantes ainda dependem da apresentação.
 
 **Atenção:** a nova versão usa recuperação textual PostgreSQL (ts_rank / to_tsvector), não busca vetorial MongoDB. A implementação vetorial original permanece na raiz.
@@ -30,13 +30,13 @@ Copie .env.example para .env.local e configure as variáveis abaixo somente no a
 | Variável | Uso |
 | --- | --- |
 | DATABASE_URL | URL privada do PostgreSQL Neon com SSL |
-| XAI_API_KEY | Chave da API xAI com créditos e permissão para o modelo |
-| XAI_MODEL | Nome do modelo disponível na xAI; padrão grok-4 |
+| GROQ_API_KEY | Chave GroqCloud criada em https://console.groq.com/keys (não confundir com xAI/Grok) |
+| GROQ_MODEL | Modelo habilitado no GroqCloud (sugestão inicial: llama-3.3-70b-versatile) |
 | ADMIN_WRITE_KEY | Código inicial de ativação do primeiro administrador, utilizado uma única vez |
 
 A autenticação agora usa as tabelas `admin_users`, `admin_sessions` e `request_limits` no Neon. Ative a conta apenas uma vez em `/admin` usando o código inicial `ADMIN_WRITE_KEY` e escolha seu próprio e-mail e senha (12+ caracteres). Após a ativação, entre sempre pelo login — a chave técnica não aparece na tela principal. A senha é armazenada usando scrypt com salt aleatório, a sessão usa cookie HttpOnly + Secure e expira em 12h. O login permite no máximo 7 tentativas por 15 minutos por combinação de IP/e-mail.
 
-Público: leitura de editais publicados, comparador e até 3 perguntas Grok por IP em 24 horas, com limite geral de 50 perguntas por 24 horas para conter custo. Em produção real, adicionar CAPTCHA, autenticação para visitantes, políticas de privacidade, medição de gastos, proteção contra múltiplos IPs e observabilidade. Essas cotas não garantem custo zero.
+Público: leitura de editais publicados, comparador e até 3 perguntas GroqCloud por IP em 24 horas, com limite geral de 50 perguntas por 24 horas para conter custo. Em produção real, adicionar CAPTCHA, autenticação para visitantes, políticas de privacidade, medição de gastos, proteção contra múltiplos IPs e observabilidade. Essas cotas não garantem custo zero.
 
 Execute sql/schema.sql no Neon. Abra /api/health para confirmar banco conectado.
 
@@ -47,12 +47,12 @@ Execute sql/schema.sql no Neon. Abra /api/health para confirmar banco conectado.
 - Preview: branch feat/projeto-integrador-react-neon-vercel.
 - Production: após validação, merge na main ou ajustar Production Branch.
 - Configurar variáveis tanto para Preview quanto para Production.
-- Testar upload, F5, consulta Grok, atualização/exclusão e telas no celular.
+- Testar upload, F5, consulta GroqCloud, atualização/exclusão e telas no celular.
 
 ## Evidências para o edital (prazo 04/12/2026)
 E1 GitHub e commits dos três participantes; E2 persistência após F5; E3 esquema e JOIN; E4 índice e EXPLAIN antes/depois (sem inventar melhoria); E5 IA real com fontes; E6 Vercel e responsividade. Anexe capturas reais e explicações em docs/evidencias. Apresentação 8–10 minutos com todos participando.
 
-O uso da API da xAI pode gerar cobrança por tokens e depende de saldo/créditos. A assinatura do aplicativo Grok, quando houver, não substitui necessariamente o acesso à API.
+GroqCloud oferece uma modalidade gratuita de API com limites sujeitos a alterações. Verifique os modelos ativos e a cota no console GroqCloud; não é a API da xAI/Grok e não requer pagamento para uso dentro dos limites gratuitos quando disponibilizados.
 
 ## Segurança e limitações
 Aceita PDFs com texto selecionável, até 4 MB/150 páginas, sem OCR. Envie apenas dados fictícios ou totalmente públicos. A validação das referências é numérica, não uma prova de precisão factual. O comparador é aproximado. A chave inicial é utilizada apenas na configuração de conta. O administrador usa login com e-mail e senha; para produção real implemente CAPTCHA, recuperação de conta, políticas contra ataques distribuídos, quotas por usuário, controles de upload e monitoramento. O projeto não substitui editais oficiais.
