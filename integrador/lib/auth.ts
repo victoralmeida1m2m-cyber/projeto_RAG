@@ -27,7 +27,8 @@ export async function currentAdmin(req:Request):Promise<{id:number;email:string}
  const token=sessionToken(req);
  if(!token)return null;
  const sql=db();
- const rows=await sql`SELECT a.id,a.email FROM admin_sessions s JOIN admin_users a ON a.id=s.admin_id WHERE s.token_hash=${hash(token}) AND s.expira_em>NOW() LIMIT 1`;
+ const fingerprint=hash(token);
+ const rows=await sql`SELECT a.id,a.email FROM admin_sessions s JOIN admin_users a ON a.id=s.admin_id WHERE s.token_hash=${fingerprint} AND s.expira_em>NOW() LIMIT 1`;
  return rows.length?{id:Number(rows[0].id),email:String(rows[0].email)}:null;
 }
 export function sessionFingerprint(req:Request){const token=sessionToken(req);return token?hash(token):null}
