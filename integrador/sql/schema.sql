@@ -56,3 +56,10 @@ CREATE TABLE IF NOT EXISTS admin_recovery (
  expires_at TIMESTAMPTZ NOT NULL,
  used_at TIMESTAMPTZ
 );
+
+-- Modelo de chat validado em chamada real, selecionado pelo diagnóstico administrativo.
+CREATE TABLE IF NOT EXISTS ai_model_config (
+ id SMALLINT PRIMARY KEY CHECK(id=1),
+ model VARCHAR(150) NOT NULL,
+ validado_em TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);

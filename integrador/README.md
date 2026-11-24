@@ -70,3 +70,10 @@ Após configurar HF_TOKEN, abra `/admin`, faça login e clique em **Testar conex
 
 ## Esqueci a senha administrativa
 Acesse `/admin/recuperar`. Como a senha é armazenada com scrypt, ela não pode ser recuperada: apenas redefinida. O proprietário da Vercel deve criar uma variável criptografada `ADMIN_RECOVERY_CODE` (Preview e Production) com um código aleatório de ao menos 24 caracteres, diferente de `ADMIN_WRITE_KEY` e de quaisquer senhas já usadas, e executar um novo deploy. Informe esse código e a senha nova no formulário. O código só pode ser utilizado uma vez, registrado em `admin_recovery`. Após o uso, a senha anterior deixa de funcionar e todas as sessões antigas são encerradas. O código não é registrado nos logs ou no repositório; o endpoint tem controle de tentativas. Para reutilizar o fluxo, configure um novo código aleatório, publique novamente e repita a operação.
+
+## Diagnóstico e modelo validado (v2)
+- O painel de administração oferece **Validar e selecionar modelo**, protegido por sessão administrativa e limite de tentativas.
+- Ele envia uma pergunta curta aos modelos em sequência. Só tenta o próximo se o serviço indicar incompatibilidade de modelo.
+- O primeiro modelo que responder é gravado em `ai_model_config` no Neon. A API de consultas usa esse modelo validado, sem trocar aleatoriamente em cada pergunta.
+- Os erros retornam categorias sanitizadas (modelo, permissão, cota, formato ou rede), sem tokens ou conteúdo do edital nos logs.
+- O build verifica tipagem e compilação; teste real de inferência exige acionar o diagnóstico com a conta administrativa. Os limites e créditos gratuitos do Hugging Face são definidos pelo provedor.
