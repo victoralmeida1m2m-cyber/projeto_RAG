@@ -183,3 +183,169 @@
 @media(prefers-reduced-motion:reduce){.studio *{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}.studio-wordmark-canvas{display:none!important}}
 
 .studio-wordmark-layer .studio-static-wordmark{font-family:Arial,Helvetica,sans-serif;pointer-events:none}
+
+
+/* Design refresh: Bento Mini UI (@sajad, 21st.dev) + Interactive Hover Button (@Shatlyk1011).
+   Adaptado para a linguagem carvão/verde-lima do Edital Fácil.
+   Estados reais; nenhum sucesso fictício ou animação essencial para navegação. */
+.studio .bento-mini-grid{
+ display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:6px
+}
+.studio .bento-mini-card{
+ display:flex;flex-direction:column;min-width:0;overflow:hidden;position:relative;
+ text-align:left;cursor:pointer;border-radius:16px;padding:0;
+ background:#141b16;color:#f3f6f0;border:1px solid #37463a;
+ transition:border-color .28s ease,transform .28s ease,box-shadow .28s ease;
+ box-shadow:0 1px 0 rgba(255,255,255,.025) inset
+}
+.studio .bento-mini-card:hover,.studio .bento-mini-card:focus-visible{
+ border-color:#a7dd72;transform:translateY(-3px);box-shadow:0 16px 36px rgba(0,0,0,.22),0 0 0 1px rgba(180,238,120,.08)
+}
+.studio .bento-mini-card-ai{border-color:#53764d;background:linear-gradient(165deg,#1a291b 0%,#141d17 85%)}
+.studio .bento-mini-visual{
+ min-height:205px;height:205px;position:relative;display:flex;align-items:center;justify-content:center;
+ padding:21px;overflow:hidden;background:radial-gradient(ellipse at 70% 36%,#233a29 0%,#18241c 48%,#111a15 100%);border-bottom:1px solid #324335
+}
+.studio .bento-mini-visual:before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(210,250,186,.027) 1px,transparent 1px),linear-gradient(90deg,rgba(210,250,186,.027) 1px,transparent 1px);background-size:24px 24px;pointer-events:none}
+.studio .bento-mini-visual-compare{background:radial-gradient(ellipse at 50% 30%,#25382a,#18211a 68%,#121a15)}
+.studio .bento-mini-visual-ai{background:radial-gradient(ellipse at 64% 38%,#2a4c27,#162519 64%,#101d14)}
+.studio .bento-mini-visual-label{position:absolute;top:15px;left:18px;color:#92aa91;font-size:9px;font-weight:850;letter-spacing:1.25px}
+.studio .bento-mini-browser{
+ position:relative;width:min(90%,260px);padding:13px;border-radius:11px;background:#1c2a20;border:1px solid #4e6650;box-shadow:0 20px 36px rgba(0,0,0,.24);transform:translateY(17px);opacity:.7
+}
+.studio .bento-mini-browser-heading{display:flex;align-items:center;gap:7px;color:#cbe5c3;font-size:11px;font-weight:760;padding:0 0 10px;border-bottom:1px solid #394d3c}
+.studio .bento-mini-browser-items{display:grid;gap:7px;padding-top:11px}
+.studio .bento-mini-file-row{display:flex;align-items:center;gap:7px;border:1px solid #415443;background:#26362a;border-radius:6px;padding:7px 8px;min-height:31px;color:#d4e5cb;font-size:10px}
+.studio .bento-mini-file-row>svg:first-child{color:#b1e881;flex-shrink:0}
+.studio .bento-mini-file-row>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1}
+.studio .bento-mini-file-row>svg:last-child{color:#c4ed9c;flex-shrink:0}
+.studio .bento-mini-file-empty{color:#a7bca4;font-size:10px}
+.studio .bento-mini-float-tag{
+ display:flex;align-items:center;gap:7px;position:absolute;z-index:2;bottom:20px;right:17px;
+ background:#c2f38b;color:#23391e;border:1px solid #d5ffac;border-radius:7px;
+ font-size:10px;font-weight:850;padding:7px 10px;box-shadow:0 9px 28px rgba(0,0,0,.28);
+ transform:scale(.86);opacity:.6
+}
+.studio .bento-mini-tag-dot{width:6px;height:6px;border-radius:50%;background:#254a2b}
+.studio .bento-mini-two-docs{position:relative;display:flex;align-items:center;justify-content:center;gap:25px;width:100%;margin-top:11px}
+.studio .bento-mini-document{
+ background:#202f25;border:1px solid #526452;border-radius:11px;
+ width:36%;min-width:90px;max-width:145px;height:131px;
+ padding:14px 11px;display:flex;flex-direction:column;gap:10px;
+ box-shadow:0 15px 28px rgba(0,0,0,.22)
+}
+.studio .bento-mini-document>span{display:flex;align-items:center;gap:6px;color:#cadcc5;font-size:10px;font-weight:750;white-space:nowrap}
+.studio .bento-mini-document>i{display:block;height:6px;flex-shrink:0;background:#435947;border-radius:3px;width:94%}
+.studio .bento-mini-document>i:nth-last-child(2){width:67%}
+.studio .bento-mini-document>i:last-child{width:78%}
+.studio .bento-mini-document>i.bento-mini-line-added{background:#b8f184;width:76%;box-shadow:0 0 15px rgba(182,238,117,.15)}
+.studio .bento-mini-compare-link{position:absolute;z-index:3;width:37px;height:37px;display:grid;place-items:center;border-radius:50%;border:1px solid #b2eb7e;background:#253b25;color:#d5f8b1;box-shadow:0 5px 15px rgba(0,0,0,.24)}
+.studio .bento-mini-compare-result{position:absolute;bottom:12px;display:flex;align-items:center;gap:6px;color:#d2edba;background:#263d2b;border:1px solid #4e7143;border-radius:20px;padding:6px 10px;font-size:9px;font-weight:730;opacity:.8}
+.studio .bento-mini-chat{
+ width:min(95%,292px);position:relative;display:grid;gap:9px;margin-top:11px;z-index:2
+}
+.studio .bento-mini-question{display:flex;align-items:center;gap:9px;margin-left:auto;background:#344f35;color:#edf7e7;border:1px solid #628263;border-radius:9px 9px 3px 9px;padding:12px 13px;font-size:11px;box-shadow:0 10px 26px rgba(0,0,0,.14)}
+.studio .bento-mini-question>svg{color:#c6f391;flex-shrink:0}
+.studio .bento-mini-answer{display:flex;align-items:center;gap:8px;background:#213026;border:1px solid #455c46;border-radius:9px 9px 9px 3px;padding:12px 11px;min-height:60px;position:relative}
+.studio .bento-mini-ai-avatar{width:25px;height:25px;flex-shrink:0;border-radius:7px;background:#334e34;color:#c4f58e;display:grid;place-items:center}
+.studio .bento-mini-answer-lines{display:grid;gap:5px;flex:1;min-width:0}
+.studio .bento-mini-answer-lines>i{display:block;height:5px;border-radius:3px;background:#56715a;width:88%}
+.studio .bento-mini-answer-lines>i:nth-child(2){width:75%}.studio .bento-mini-answer-lines>i:nth-child(3){width:56%;background:#98ce79}
+.studio .bento-mini-citation{font-size:9px;color:#c4f394;white-space:nowrap;font-weight:750}
+.studio .bento-mini-ai-glow{position:absolute;inset:auto auto -60px 30%;width:170px;height:130px;filter:blur(48px);background:#b5f175;opacity:.06;pointer-events:none}
+.studio .bento-mini-description{padding:20px 22px 21px;min-height:180px;display:flex;flex-direction:column;align-items:flex-start;flex:1}
+.studio .bento-mini-card-kicker{font-size:9px;font-weight:850;letter-spacing:1.4px;color:#a8cf92}
+.studio .bento-mini-description h3{font-size:clamp(17px,1.45vw,23px);line-height:1.2;letter-spacing:-.045em;color:#f7faf3;font-weight:750;margin:10px 0 10px}
+.studio .bento-mini-description p{font-size:11.5px;line-height:1.55;color:#9cad9e;margin:0 0 16px;max-width:38ch}
+.studio .bento-mini-cta{margin-top:auto;color:#bdeb90;display:inline-flex;gap:8px;align-items:center;font-size:11px;font-weight:800;border-bottom:1px solid transparent;transition:gap .2s,border-color .2s}
+.studio .bento-mini-card:hover .bento-mini-cta{gap:14px;border-color:#bdeb90}
+@keyframes bento-rise{from{opacity:.25;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes bento-slide-left{from{opacity:.65;transform:translateX(-21px) rotate(-4deg)}to{opacity:1;transform:translateX(0) rotate(-4deg)}}
+@keyframes bento-slide-right{from{opacity:.65;transform:translateX(21px) rotate(3deg)}to{opacity:1;transform:translateX(0) rotate(3deg)}}
+@keyframes bento-pop{from{opacity:.4;transform:scale(.84)}to{opacity:1;transform:scale(1)}}
+.studio .bento-mini-visible .bento-mini-browser{animation:bento-rise .8s cubic-bezier(.25,.8,.25,1) both}
+.studio .bento-mini-visible .bento-mini-file-row{animation:bento-rise .6s ease both;animation-delay:calc(.16s + var(--bento-index,0)*.13s)}
+.studio .bento-mini-visible .bento-mini-float-tag{animation:bento-pop .55s ease .65s both}
+.studio .bento-mini-visible .bento-mini-document-before{animation:bento-slide-left .7s ease both}
+.studio .bento-mini-visible .bento-mini-document-after{animation:bento-slide-right .7s ease both}
+.studio .bento-mini-visible .bento-mini-question{animation:bento-rise .7s ease .08s both}
+.studio .bento-mini-visible .bento-mini-answer{animation:bento-rise .7s ease .25s both}
+/* Hover Button: expanding dot, truthful async states and smooth focus navigation. */
+.studio .interactive-hover-btn{
+ --interactive-fill:#bff182;--interactive-fg:#172616;
+ display:inline-flex;position:relative;isolation:isolate;align-items:center;justify-content:center;
+ gap:9px;border-radius:999px;min-height:46px;min-width:148px;padding:0 21px;border:1px solid #bff182;
+ font-size:12px!important;font-weight:800!important;letter-spacing:-.015em;
+ color:#172616;background:#c5f58c;overflow:hidden;vertical-align:middle;
+ transition:border-color .2s,transform .2s,box-shadow .2s;cursor:pointer;
+ text-align:center;white-space:nowrap
+}
+.studio .interactive-hover-btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 7px 21px rgba(118,185,85,.12)}
+.studio .interactive-hover-btn--secondary{background:#17231a;border-color:#647f55;color:#dff5d2;--interactive-fill:#c4f384;--interactive-fg:#192718}
+.studio .interactive-hover-btn--quiet{background:transparent;border-color:#354a38;color:#d5f1c7;--interactive-fill:#b9ed7d;--interactive-fg:#142216}
+.studio .interactive-hover-btn--compact{min-height:39px;min-width:120px;font-size:11px!important;padding:0 17px}
+.studio .interactive-hover-btn--hero{min-height:47px;min-width:185px}
+.studio .interactive-hover-btn .interactive-hover-dot{
+ position:absolute;z-index:-1;top:50%;left:16px;width:9px;height:9px;border-radius:50%;
+ background:#1d361c;transform:translateY(-50%);transform-origin:center;
+ transition:transform .5s cubic-bezier(.24,.65,.18,1)
+}
+.studio .interactive-hover-btn--secondary .interactive-hover-dot,.studio .interactive-hover-btn--quiet .interactive-hover-dot{background:#c1f17f}
+.studio .interactive-hover-btn .interactive-hover-main{display:flex;align-items:center;justify-content:center;gap:9px;transition:opacity .22s ease,transform .36s ease;max-width:100%}
+.studio .interactive-hover-btn .interactive-hover-main>span{overflow:hidden;text-overflow:ellipsis}
+.studio .interactive-hover-main-arrow{margin-left:1px}
+.studio .interactive-hover-reveal{
+ position:absolute;inset:0;display:flex;gap:9px;align-items:center;justify-content:center;
+ padding:0 13px;opacity:0;transform:translateX(-15px);pointer-events:none;
+ transition:opacity .32s ease,transform .4s ease;color:#f3f9ee
+}
+.studio .interactive-hover-btn--secondary .interactive-hover-reveal,.studio .interactive-hover-btn--quiet .interactive-hover-reveal{color:#172616}
+.studio .interactive-hover-btn[data-status="idle"]:hover:not(:disabled) .interactive-hover-dot,
+.studio .interactive-hover-btn[data-status="idle"]:focus-visible:not(:disabled) .interactive-hover-dot{transform:translateY(-50%) scale(58)}
+.studio .interactive-hover-btn[data-status="idle"]:hover:not(:disabled) .interactive-hover-main,
+.studio .interactive-hover-btn[data-status="idle"]:focus-visible:not(:disabled) .interactive-hover-main{opacity:0;transform:translateX(22px)}
+.studio .interactive-hover-btn[data-status="idle"]:hover:not(:disabled) .interactive-hover-reveal,
+.studio .interactive-hover-btn[data-status="idle"]:focus-visible:not(:disabled) .interactive-hover-reveal{opacity:1;transform:translateX(0)}
+.studio .interactive-hover-btn[data-status="loading"],.studio .interactive-hover-btn[data-status="success"]{cursor:progress;background:#293d27;color:#dcf5ce;border-color:#587849}
+.studio .interactive-hover-btn[data-status="success"]{cursor:pointer;background:#315b32;color:#edfbe8;border-color:#7eb86d}
+.studio .interactive-hover-btn[data-status="loading"] .interactive-hover-dot,.studio .interactive-hover-btn[data-status="success"] .interactive-hover-dot{opacity:0}
+.studio .interactive-hover-btn:disabled{cursor:not-allowed;opacity:.55;box-shadow:none}
+.studio .interactive-hover-btn .spin{animation:spin 1s linear infinite}
+.studio .interactive-hover-form-action{justify-self:flex-start}
+.studio .studio-doc-actions .interactive-hover-btn{flex-shrink:0}
+@media(max-width:1150px){
+ .studio .bento-mini-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .studio .bento-mini-card-ai{grid-column:1/-1}
+ .studio .bento-mini-card-ai .bento-mini-visual{height:205px}
+ .studio .bento-mini-card-ai .bento-mini-description{min-height:0}
+}
+@media(max-width:760px){
+ .studio .bento-mini-grid{grid-template-columns:1fr;gap:13px}
+ .studio .bento-mini-card-ai{grid-column:auto}
+ .studio .bento-mini-visual{height:185px;min-height:185px}
+ .studio .bento-mini-description{min-height:unset;padding:18px 19px}
+ .studio .bento-mini-description h3{font-size:21px}
+ .studio .bento-mini-card{max-width:100%}
+ .studio .interactive-hover-btn--hero{width:100%}
+ .studio .studio-library-toolbar .interactive-hover-btn{flex:1}
+}
+@media(max-width:520px){
+ .studio .bento-mini-grid{gap:12px}
+ .studio .bento-mini-browser{width:min(92%,270px)}
+ .studio .bento-mini-document{min-width:85px}
+ .studio .bento-mini-two-docs{gap:21px}
+ .studio .bento-mini-description p{font-size:12px}
+ .studio .interactive-hover-btn{white-space:normal;line-height:1.25}
+ .studio .interactive-hover-btn--compact{min-width:0}
+ .studio .studio-doc-actions .interactive-hover-btn{flex-grow:1}
+}
+@media(prefers-reduced-motion:reduce){
+ .studio .bento-mini-card,.studio .bento-mini-card *,.studio .interactive-hover-btn,.studio .interactive-hover-btn *{animation:none!important;transition:none!important}
+ .studio .bento-mini-browser,.studio .bento-mini-float-tag,.studio .bento-mini-document,.studio .bento-mini-question,.studio .bento-mini-answer,.studio .bento-mini-file-row{opacity:1!important;transform:none!important}
+ .studio .interactive-hover-btn[data-status="idle"]:hover:not(:disabled) .interactive-hover-main,
+ .studio .interactive-hover-btn[data-status="idle"]:focus-visible:not(:disabled) .interactive-hover-main{opacity:1;transform:none}
+ .studio .interactive-hover-btn[data-status="idle"]:hover:not(:disabled) .interactive-hover-reveal,
+ .studio .interactive-hover-btn[data-status="idle"]:focus-visible:not(:disabled) .interactive-hover-reveal{opacity:0}
+ .studio .interactive-hover-btn[data-status="idle"]:hover:not(:disabled) .interactive-hover-dot,
+ .studio .interactive-hover-btn[data-status="idle"]:focus-visible:not(:disabled) .interactive-hover-dot{transform:translateY(-50%)}
+}
