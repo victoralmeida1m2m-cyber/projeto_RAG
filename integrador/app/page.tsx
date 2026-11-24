@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import ScribbleNav from '@/components/ScribbleNav';
-import BentoMiniCards from '@/components/BentoMiniCards';
+import { MascotIllustration, PlayfulActionCards, PlayfulResourceGrid } from '@/components/PlayfulVisuals';
 import InteractiveHoverButton from '@/components/InteractiveHoverButton';
 const VectorWordmark=dynamic(()=>import('@/components/VectorWordmark'),{ssr:false});
 import { ArrowRight, BookOpen, CheckCircle2, FileDiff, FilePlus2, FileSearch, LoaderCircle, LockKeyhole, RefreshCcw, ShieldCheck, Trash2, Sparkles, Search, Files, WandSparkles, ArrowUpRight, ChevronRight, Send, Layers3, FolderOpen, PanelRightOpen, CircleDot, Zap, FileText, Menu, X, Clock3 } from 'lucide-react';
@@ -121,7 +121,7 @@ export default function Home(){
  return <div className="studio">
   <aside className={'studio-sidebar '+(menuAberto?'mobile-open':'')}>
    <div className="studio-brand">
-    <a href="/" className="studio-logo" aria-label="Edital Fácil, início"><span className="studio-logo-symbol"><FileText size={19}/></span><span>edital<span className="studio-brand-green">.fácil</span><small>AI WORKSPACE</small></span></a>
+    <a href="/" className="studio-logo" aria-label="Edital Fácil, início"><span className="studio-logo-symbol"><FileText size={23}/></span><span>Edital <span className="studio-brand-green">Fácil</span><small>INTELIGÊNCIA EM EDITAIS</small></span></a>
     <button type="button" className="studio-mobile-close" onClick={()=>setMenuAberto(false)} aria-label="Fechar menu"><X size={20}/></button>
    </div>
    <div className="studio-sidebar-group"><span className="studio-sidebar-label">ESPAÇO DE TRABALHO</span><ScribbleNav items={areas.filter(a=>a.id!=='cadastro'||isAdmin)} value={area} onSelect={escolher}/></div>
@@ -148,30 +148,46 @@ export default function Home(){
     {erro&&<div className="notice error studio-message" role="alert"><CircleDot size={18}/>{erro}</div>}
     {status&&<div className="notice success studio-message" role="status"><CheckCircle2 size={18}/>{status}</div>}
     {area==='assistente'&&<>
-     <div className="studio-page-intro"><div><span className="studio-overline"><span className="studio-overline-star">✳</span> INTELIGÊNCIA DOCUMENTAL / EDIÇÃO 2026</span><h1>Seu edital.<br/><em>Sem entrelinhas.</em></h1><p>As respostas que você precisa, direto do documento. Consulte requisitos, prazos e informações importantes com inteligência artificial e fontes verificáveis.</p></div><div className="studio-intro-side"><div className="studio-orbit"><Sparkles size={26}/></div><span>Menos procura.<br/><strong>Mais clareza.</strong></span></div></div>
-     <section className="studio-ai-stage" aria-label="Assistente de inteligência artificial">
-      <div className="studio-stage-grain" aria-hidden="true"/>
-      <div className="studio-wordmark-layer" aria-hidden="true">
+     <section className="play-hero" aria-labelledby="play-hero-title">
+      <div className="play-hero-noise" aria-hidden="true"/>
+      <span className="play-hero-paint play-hero-paint-purple" aria-hidden="true"/>
+      <span className="play-hero-paint play-hero-paint-blue" aria-hidden="true"/>
+      <span className="play-hero-paint play-hero-paint-orange" aria-hidden="true"/>
+      <div className="studio-wordmark-layer play-wordmark-layer" aria-hidden="true">
        <span className="studio-static-wordmark">EDITAL</span>
-       {animacao&&<div className="studio-wordmark-canvas"><VectorWordmark text="EDITAL" font={{fontFamily:'Arial, sans-serif',fontWeight:900,fontSize:'340px',letterSpacing:'-0.065em'}} textColor="#eaffca" shade="#b6ea74" background="#131b16" accent="rgba(183,239,88,0.4)" reach={250} speed={12} damping={84} handles={{labels:false,size:66,spread:26}} style={{minWidth:0,minHeight:0,width:'100%',height:'100%'}}/></div>}
+       {animacao&&<div className="studio-wordmark-canvas"><VectorWordmark text="EDITAL" font={{fontFamily:'Arial, sans-serif',fontWeight:900,fontSize:'340px',letterSpacing:'-0.065em'}} textColor="#dfffbe" shade="#b6ea74" background="#131b16" accent="rgba(183,239,88,0.4)" reach={180} speed={10} damping={86} handles={{labels:false,size:55,spread:26}} style={{minWidth:0,minHeight:0,width:'100%',height:'100%'}}/></div>}
       </div>
-      <div className="studio-stage-content">
-       <div className="studio-stage-top"><span className="studio-stage-label"><span className="studio-sparkle"><Sparkles size={14}/></span> ASSISTENTE INTELIGENTE</span><span className="studio-stage-top-status"><span className="studio-live-dot"/> ONLINE</span></div>
-       <div className="studio-stage-heading"><span className="studio-stage-kicker">SUA PRÓXIMA RESPOSTA COMEÇA AQUI</span><h2>O que você quer<br/>saber sobre seu edital?</h2><p>Selecione um documento e pergunte. O Gemini localiza os trechos relevantes e responde com referências.</p></div>
-       <form className="studio-prompt-form" onSubmit={perguntar}>
-        <div className="studio-document-select"><FileText size={17}/><label htmlFor="studio-edital">EDITAL ATIVO</label><select id="studio-edital" value={selecionado} onChange={e=>setSelecionado(e.target.value)} required aria-label="Edital ativo">{publicados.length===0&&<option value="">Nenhum edital publicado</option>}{publicados.map(e=><option key={e.id} value={e.id}>{e.concurso} — {e.cargo}</option>)}</select><ChevronRight size={15}/></div>
-        <label htmlFor="studio-question" className="studio-sr-only">Sua pergunta para o assistente</label>
-        <textarea id="studio-question" required minLength={5} maxLength={600} value={pergunta} onChange={e=>setPergunta(e.target.value)} placeholder="Ex.: Quais são os requisitos para o cargo?" rows={3}/>
-        <div className="studio-composer-bottom"><span><Sparkles size={14}/> Respostas com referências ao edital</span><InteractiveHoverButton className="studio-send interactive-hover-btn--hero" type="submit" label="Perguntar à IA" loading={ocupado} success={!!resposta} loadingText="Consultando edital..." successText="Resposta pronta" disabled={!selecionado} icon={<Sparkles size={17}/>}/></div>
+      <div className="play-hero-copy">
+       <span className="play-hero-eyebrow"><Sparkles size={16}/> INTELIGÊNCIA QUE FACILITA SUA VIDA</span>
+       <span className="play-crown" aria-hidden="true"><svg width="58" height="50" viewBox="0 0 60 53" fill="none"><path d="m4 17 16 12 9-25 9 24 17-12-7 30H11L4 17Z" stroke="#D7FF29" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/><path d="M15 51h32" stroke="#D7FF29" strokeWidth="4" strokeLinecap="round"/></svg></span>
+       <h1 id="play-hero-title">ENTENDA SEU <span className="play-title-last">EDITAL.</span></h1>
+       <p className="play-hero-lead">Consulte, compare e entenda editais com IA e <strong>fontes verificáveis.</strong></p>
+       <form className="play-question-form" onSubmit={perguntar}>
+        <div className="play-edital-picker"><FileText size={15}/><label htmlFor="studio-edital">Edital selecionado</label><select id="studio-edital" value={selecionado} onChange={e=>setSelecionado(e.target.value)} required aria-label="Edital selecionado">{publicados.length===0&&<option value="">Nenhum edital publicado</option>}{publicados.map(e=><option key={e.id} value={e.id}>{e.concurso} — {e.cargo}</option>)}</select></div>
+        <div className="play-question-composer">
+         <Sparkles size={20} className="play-question-star" aria-hidden="true"/>
+         <label htmlFor="studio-question" className="studio-sr-only">Faça uma pergunta sobre o edital</label>
+         <input id="studio-question" value={pergunta} onChange={e=>setPergunta(e.target.value)} minLength={5} maxLength={600} required placeholder="Faça uma pergunta sobre um edital..." autoComplete="off"/>
+         <InteractiveHoverButton className="play-ask-button" type="submit" label="Perguntar à IA" loading={ocupado} success={!!resposta} loadingText="Consultando..." successText="Resposta pronta" disabled={!selecionado} icon={<Send size={16}/>}/>
+        </div>
        </form>
-       <div className="studio-prompts"><span>EXPERIMENTE:</span>{exemplos.map(x=><button type="button" key={x} onClick={()=>setPergunta(x)}>{x}<ArrowUpRight size={12}/></button>)}</div>
+       <div className="play-suggestions"><span>Exemplos:</span>{exemplos.map(example=><button key={example} type="button" onClick={()=>{setPergunta(example);document.getElementById('studio-question')?.focus()}}>{example}</button>)}</div>
       </div>
+      <div className="play-hero-character"><MascotIllustration/></div>
+      <span className="play-sparkle play-sparkle-one" aria-hidden="true">✳</span>
+      <span className="play-sparkle play-sparkle-two" aria-hidden="true">✦</span>
      </section>
      {resposta&&<section className="studio-response" aria-live="polite"><div className="studio-result-head"><span className="studio-result-icon"><Sparkles size={19}/></span><div><strong>Resposta do assistente</strong><span>Gerada com o contexto do seu edital</span></div><span className="studio-result-check"><CheckCircle2 size={15}/> Consulta concluída</span></div><div className="studio-answer-text">{resposta}</div>{fontes.length>0&&<details className="studio-source-details"><summary><BookOpen size={18}/> Ver fontes consultadas ({fontes.length}) <ChevronRight size={17}/></summary><div className="studio-source-list">{fontes.map(f=><div className="studio-source-item" key={f.numero}><div><span>FONTE {String(f.numero).padStart(2,'0')}</span><strong>Página {f.pagina}</strong></div><p>{f.texto}</p></div>)}</div></details>}</section>}
-     <div className="studio-summary-row"><div><span className="studio-block-eyebrow">VISÃO GERAL</span><h2>Seu espaço, organizado.</h2></div><span className="studio-muted">Tudo que você precisa em um só lugar.</span></div>
-     <BentoMiniCards libraryCount={publicados.length} recentDocs={publicados.map(e=>e.concurso)} onLibrary={()=>escolher('biblioteca')} onCompare={()=>escolher('comparador')} onAssistant={()=>{escolher('assistente');requestAnimationFrame(()=>{const campo=document.getElementById('studio-question');campo?.focus();campo?.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'center'});});}}/>
-     <div className="studio-section-heading studio-recent-section"><div><span className="studio-block-eyebrow">DOCUMENTOS DISPONÍVEIS</span><h2>Prontos para consultar</h2></div><button className="studio-text-link" type="button" onClick={()=>escolher('biblioteca')}>Ver biblioteca completa <ArrowUpRight size={16}/></button></div>
+     <section className="play-tools" aria-label="Acessos rápidos do Edital Fácil">
+      <h2 className="studio-sr-only">Ferramentas para consultar, organizar e comparar editais</h2>
+      <PlayfulActionCards onAssistant={()=>{escolher('assistente');requestAnimationFrame(()=>{document.getElementById('studio-question')?.focus();window.scrollTo({top:0,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});});}} onLibrary={()=>escolher('biblioteca')} onCompare={()=>escolher('comparador')}/>
+     </section>
+     <div className="studio-section-heading studio-recent-section play-section-heading"><div><h2>EDITAIS RECENTES<span className="play-underline" aria-hidden="true"/></h2></div><button className="studio-text-link" type="button" onClick={()=>escolher('biblioteca')}>Ver todos os editais <ArrowUpRight size={16}/></button></div>
      <div className="studio-mini-library">{carregando?<p>Carregando documentos...</p>:publicados.length===0?<div className="studio-empty">Nenhum edital publicado ainda.</div>:publicados.slice(0,3).map(e=><button type="button" className="studio-mini-row" key={e.id} onClick={()=>{setSelecionado(e.id);escolher('assistente')}}><span className="studio-mini-icon"><FileText size={20}/></span><span className="studio-mini-info"><strong>{e.concurso}</strong><small>{e.cargo} • {e.total_paginas} páginas</small></span><span className="studio-mini-pill"><span className="studio-live-dot"/> Publicado</span><ArrowUpRight size={18}/></button>)}</div>
+     <section className="play-resources" aria-labelledby="play-resources-title">
+      <div className="play-resource-heading"><h2 id="play-resources-title">RECURSOS QUE FACILITAM SUA ROTINA<span className="play-underline" aria-hidden="true"/></h2><span aria-hidden="true" className="play-resource-squiggle">⌁</span></div>
+      <PlayfulResourceGrid onAssistant={()=>{escolher('assistente');requestAnimationFrame(()=>{document.getElementById('studio-question')?.focus();window.scrollTo({top:0,behavior:'smooth'});});}} onLibrary={()=>escolher('biblioteca')} onCompare={()=>escolher('comparador')}/>
+     </section>
     </>}
     {area==='biblioteca'&&<section className="studio-subpage">
      <div className="studio-section-heading studio-subpage-heading"><div><span className="studio-block-eyebrow">02 / BIBLIOTECA DIGITAL</span><h1>Seus documentos.<br/><em>Todos em ordem.</em></h1><p>Explore os editais publicados, filtre por concurso ou cargo e abra a IA com o documento selecionado.</p></div><div className="studio-section-icon"><BookOpen size={26}/></div></div>
