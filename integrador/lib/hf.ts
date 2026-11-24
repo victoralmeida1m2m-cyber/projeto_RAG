@@ -54,7 +54,7 @@ export async function requestHF(input:{token:string;model:string;messages:Messag
   }
   const content=body?.choices?.[0]?.message?.content;
   const answer=typeof content==='string'?content.trim():Array.isArray(content)?
-   content.filter((c:unknown)=>typeof c==='object'&&c!==null&&'text' in c).map((c:{text:string})=>String(c.text)).join('').trim():'';
+   content.map((c:unknown)=>typeof c==='object'&&c!==null&&'text' in c?String(c.text??''):'').join('').trim():'';
   if(!answer)return {ok:false,model:input.model,status:502,category:'resposta',code:'empty_text'};
   return {ok:true,model:input.model,text:answer};
  }catch(e){
