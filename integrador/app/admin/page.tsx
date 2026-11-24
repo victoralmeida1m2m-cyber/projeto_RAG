@@ -109,6 +109,7 @@ export default function AdminPage(){
       {!state.inicializado&&<label>Código inicial de ativação<input type="password" autoComplete="off" required value={chave} onChange={e=>setChave(e.target.value)} placeholder="Código cadastrado em ADMIN_WRITE_KEY"/></label>}
       <button type="submit" className="action" disabled={ocupado}>{ocupado?<LoaderCircle size={17} className="spin"/>:<ArrowRight size={17}/>} {state.inicializado?'Entrar no painel':'Criar conta e ativar'}</button>
      </form>
+     <a className="outline-btn" href="/admin/recuperar"><KeyRound size={16}/> Esqueci minha senha</a>
      <p className="helper">Senha armazenada apenas como hash no Neon. A sessão utiliza um cookie seguro e não salva sua senha no navegador.</p>
     </section>}
   </main>

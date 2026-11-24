@@ -46,3 +46,13 @@ CREATE TABLE IF NOT EXISTS request_limits (
  janela_inicio TIMESTAMPTZ NOT NULL DEFAULT NOW(),
  acessos INTEGER NOT NULL DEFAULT 1 CHECK(acessos>=1)
 );
+
+-- Recuperação de senha por código de posse da conta Vercel.
+-- Somente o hash MD5 de um código aleatório com >= 24 caracteres é registrado no Neon.
+-- O código é de uso único: o mesmo hash não pode ser reutilizado.
+CREATE TABLE IF NOT EXISTS admin_recovery (
+ id SMALLINT PRIMARY KEY CHECK(id=1),
+ token_hash CHAR(32) NOT NULL,
+ expires_at TIMESTAMPTZ NOT NULL,
+ used_at TIMESTAMPTZ
+);
