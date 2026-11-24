@@ -56,8 +56,8 @@ export default function AdminPage(){
   try{
    const res=await fetch('/api/admin/testar-ia',{method:'POST',cache:'no-store'});
    const dados=await res.json();
-   if(!res.ok){const tentativas=Array.isArray(dados.tentativas)?dados.tentativas.map((t:{modelo:string;http:number})=>t.modelo+' (HTTP '+t.http+')').join(', '):'';throw new Error((dados.erro||'Falha ao consultar o Hugging Face.')+(tentativas?' Modelos testados: '+tentativas:''));}
-   setResultadoIA('Integração validada! Modelo '+dados.modelo+' respondeu. Testado(s): '+dados.tentativas+'.');
+   if(!res.ok){const tentativas=Array.isArray(dados.tentativas)?dados.tentativas.map((t:{modelo:string;http:number})=>t.modelo+' (HTTP '+t.http+')').join(', '):'';throw new Error((dados.erro||'Falha ao consultar o Gemini.')+(tentativas?' Modelos testados: '+tentativas:''));}
+   setResultadoIA('Teste aprovado: Gemini '+dados.modelo+' respondeu com uma citação válida [1].');
   }catch(e){setErro(e instanceof Error?e.message:'Falha no teste.')}
   finally{setTestandoIA(false)}
  }
@@ -87,9 +87,9 @@ export default function AdminPage(){
       <div className="admin-buttons"><a href="/" className="action">Acessar biblioteca <ArrowRight size={17}/></a><button disabled={ocupado} className="outline-btn" onClick={sair}><LogOut size={17}/> Sair</button></div>
      </section>
      <section className="form-card">
-      <div className="admin-title"><ShieldCheck size={24}/><div><h2>Diagnóstico do Hugging Face</h2><p>Valida a conexão e seleciona automaticamente um modelo que responda na sua conta.</p></div></div>
+      <div className="admin-title"><ShieldCheck size={24}/><div><h2>Diagnóstico do Gemini</h2><p>Testa o modelo Gemini já validado e confirma uma resposta com referência.</p></div></div>
       <p className="helper">O teste envia apenas uma mensagem curta ao modelo. Requer uma cota disponível e não envia seus editais.</p>
-      <button className="action" disabled={testandoIA} onClick={()=>void testarIA()}>{testandoIA?<LoaderCircle className="spin" size={17}/>:<ShieldCheck size={17}/>} Validar e selecionar modelo</button>
+      <button className="action" disabled={testandoIA} onClick={()=>void testarIA()}>{testandoIA?<LoaderCircle className="spin" size={17}/>:<ShieldCheck size={17}/>} Testar Gemini com fonte</button>
       {resultadoIA&&<div className="notice success" role="status"><CheckCircle2 size={17}/>{resultadoIA}</div>}
      </section>
      <section className="form-card">

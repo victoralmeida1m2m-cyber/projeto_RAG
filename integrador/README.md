@@ -1,79 +1,50 @@
 # Edital Fácil — Projeto Integrador PIT (2026)
 
-Esta versão acadêmica adapta o Edital Fácil original para **React (Next.js)** + **PostgreSQL/Neon** + **Hugging Face Inference Providers** + **Vercel**. O projeto original em Python/Streamlit/MongoDB com RAG vetorial continua preservado na raiz deste repositório. A nova aplicação fica isolada no diretório integrador.
+Esta implementação usa **Next.js/React**, **PostgreSQL no Neon**, **Google Gemini API** e **Vercel**. O projeto original Python/Streamlit/MongoDB foi preservado na raiz; a implementação acadêmica está em `integrador/`.
 
-## Objetivo e fluxo completo
-Cadastrar um edital fictício em PDF → extrair trechos → salvar no PostgreSQL → listar na interface React → recarregar a página (dados persistem) → consultar com IA real e fontes → arquivar ou excluir. O comparador de PDFs é funcionalidade complementar.
+## Arquitetura e funcionalidades
+- Biblioteca pública com editais cadastrados por administradores; PDF com texto selecionável, até 4 MB e 150 páginas.
+- Trechos dos PDFs persistidos em `trechos`, relacionados à tabela `editais`; respostas registradas em `consultas`.
+- Busca por relevância no PostgreSQL (full-text search) e geração de respostas pelo Gemini, com fontes numeradas.
+- Comparação de PDFs, controles de publicação e login administrativo (sessão HttpOnly e senha armazenada com scrypt + salt).
+- Leitura de documentos sem login; cadastro/exclusão e diagnóstico técnico exigem sessão de administrador.
+- Máximo de 3 consultas por IP/24h para visitantes e 50 chamadas de IA/24h em todo o sistema. São **limites internos**, não garantem gratuidade da API.
 
-## Requisitos acadêmicos
-- React com biblioteca pública, assistente IA com limite, comparador e cadastro restrito a administradores. Página `/admin` para login.
-- Formulários, listagem persistente, mensagens de sucesso/erro, carregamento, responsividade e foco visível.
-- Next.js Route Handlers: GET/POST de editais; GET/PATCH/DELETE por ID; POST de IA e comparação.
-- Neon PostgreSQL: 3 tabelas (editais, trechos, consultas), 2 FKs, PKs, CHECK/NOT NULL/UNIQUE e índices.
-- SQL: JOIN, agregação e EXPLAIN documentados em sql/consultas_avaliacao.sql.
-- Hugging Face chamado no servidor, com verificação estrutural de citações e gravação do histórico.
-- GitHub, documentação e Vercel. Evidências reais e participação dos três integrantes ainda dependem da apresentação.
-
-**Atenção:** a nova versão usa recuperação textual PostgreSQL (ts_rank / to_tsvector), não busca vetorial MongoDB. A implementação vetorial original permanece na raiz.
-
-## Instalação
-Node.js 22 LTS. Na raiz do repositório execute:
-
-    cd integrador
-    npm install
-    npm run typecheck
-    npm run build
-    npm run dev
-
-Copie .env.example para .env.local e configure as variáveis abaixo somente no ambiente local. No Vercel, configure-as em Settings > Environment Variables. Nunca publique segredos ou chaves em arquivos versionados.
-
-| Variável | Uso |
+## Variáveis de ambiente
+| Nome | Uso |
 | --- | --- |
-| DATABASE_URL | URL privada do PostgreSQL Neon com SSL |
-| HF_TOKEN | Token do Hugging Face com permissão 'Make calls to Inference Providers'; crie em https://huggingface.co/settings/tokens |
-| HF_MODEL | ID do modelo de chat disponível em um Inference Provider; ponto de partida: Qwen/Qwen2.5-7B-Instruct:fastest |
-| ADMIN_WRITE_KEY | Código inicial de ativação do primeiro administrador, utilizado uma única vez |
+| `DATABASE_URL` | Conexão SSL ao Neon/PostgreSQL, somente no servidor |
+| `GEMINI_API_KEY` | Chave da Gemini API; cadastrar criptografada em Preview e Production |
+| `GEMINI_MODEL` | Modelo validado com API real: `gemini-3.5-flash-lite` |
+| `ADMIN_WRITE_KEY` | Código único inicial da primeira conta administrativa |
+| `ADMIN_RECOVERY_CODE` | Opcional: código de recuperação de senha de uso único, não deve ser divulgado |
 
-A autenticação agora usa as tabelas `admin_users`, `admin_sessions` e `request_limits` no Neon. Ative a conta apenas uma vez em `/admin` usando o código inicial `ADMIN_WRITE_KEY` e escolha seu próprio e-mail e senha (12+ caracteres). Após a ativação, entre sempre pelo login — a chave técnica não aparece na tela principal. A senha é armazenada usando scrypt com salt aleatório, a sessão usa cookie HttpOnly + Secure e expira em 12h. O login permite no máximo 7 tentativas por 15 minutos por combinação de IP/e-mail.
+Não inclua chaves em código, commits ou capturas de tela. Uma chave inserida em conversa deve ser **rotacionada** no Google AI Studio após os testes e substituída na Vercel.
 
-Público: leitura de editais publicados, comparador e até 3 perguntas Hugging Face por IP em 24 horas, com limite geral de 50 perguntas por 24 horas para conter custo. Em produção real, adicionar CAPTCHA, autenticação para visitantes, políticas de privacidade, medição de gastos, proteção contra múltiplos IPs e observabilidade. Essas cotas não garantem custo zero.
+## Desenvolvimento local
+1. Instale Node.js 22 e entre em `integrador/`.
+2. Rode `npm install`, `npm run typecheck`, `npm run build`.
+3. Crie `.env.local` a partir de `.env.example`, sem commitá-lo.
+4. Rode `npm run dev` e abra a porta informada.
+5. Execute `sql/schema.sql` no Neon caso esteja preparando um banco novo.
 
-Execute sql/schema.sql no Neon. Abra /api/health para confirmar banco conectado.
+## Deploy e validação
+A Vercel utiliza framework Next.js, Node.js 22 e Root Directory `integrador`. A branch `feat/projeto-integrador-react-neon-vercel` publica um Preview isolado; a Production deve ser promovida após os testes.
 
-## Deploy no Vercel
-- Project Framework: Next.js.
-- Root Directory: integrador.
-- Node Version: 22.x.
-- Preview: branch feat/projeto-integrador-react-neon-vercel.
-- Production: após validação, merge na main ou ajustar Production Branch.
-- Configurar HF_TOKEN e HF_MODEL tanto para Preview quanto para Production. O token nunca deve ir ao navegador nem ao GitHub.
-- Testar upload, F5, consulta Hugging Face, atualização/exclusão e telas no celular.
+Checklist:
+- GET `/api/health`: resposta HTTP 200 e `banco: conectado`.
+- GET `/api/auth/me`: estado correto da sessão.
+- GET `/api/editais`: dados persistidos no Neon.
+- Login administrativo em `/admin` e botão **Testar Gemini com fonte**.
+- POST `/api/ia` com um edital publicado: verificar HTTP 200, texto, array de fontes e citação numérica válida.
+- Recarregar a página, cadastrar/arquivar/excluir um PDF fictício, comparar duas versões e conferir a visualização mobile.
+- A API pode ter limites de uso gratuitos diferentes por conta/modelo; consultar o Google AI Studio.
 
-## Evidências para o edital (prazo 04/12/2026)
-E1 GitHub e commits dos três participantes; E2 persistência após F5; E3 esquema e JOIN; E4 índice e EXPLAIN antes/depois (sem inventar melhoria); E5 IA real com fontes; E6 Vercel e responsividade. Anexe capturas reais e explicações em docs/evidencias. Apresentação 8–10 minutos com todos participando.
+## Requisitos e evidências para a apresentação
+- React responsivo, formulários, rotas REST e inteligência artificial real.
+- PostgreSQL com `editais`, `trechos`, `consultas` e duas FKs, JOIN e índices em `sql/consultas_avaliacao.sql`.
+- Capturas reais: fluxo CRUD, persistência após recarga, esquema SQL e índice/EXPLAIN, integração IA com fontes, Vercel/URL e contribuição de todos os integrantes.
+- Prazo acadêmico citado: 04/12/2026. Não apresentar resultados simulados como provas reais.
 
-Os Inference Providers do Hugging Face podem oferecer créditos gratuitos limitados conforme a conta, mas não são ilimitados nem têm disponibilidade garantida para todo modelo. Consulte https://huggingface.co/settings/billing e https://huggingface.co/settings/tokens antes de testar; a assinatura do ChatGPT e outras APIs não se aplicam.
-
-## Segurança e limitações
-Aceita PDFs com texto selecionável, até 4 MB/150 páginas, sem OCR. Envie apenas dados fictícios ou totalmente públicos. A validação das referências é numérica, não uma prova de precisão factual. O comparador é aproximado. A chave inicial é utilizada apenas na configuração de conta. O administrador usa login com e-mail e senha; para produção real implemente CAPTCHA, recuperação de conta, políticas contra ataques distribuídos, quotas por usuário, controles de upload e monitoramento. O projeto não substitui editais oficiais.
-
-## Ativação da API Hugging Face
-1. Entre em https://huggingface.co/settings/tokens e crie um token fine-grained que permita **Make calls to Inference Providers**.
-2. Na Vercel, crie a variável **HF_TOKEN** como segredo criptografado nos ambientes Preview e Production. Não cole o token em tickets, repositórios ou conversas.
-3. Configure **HF_MODEL** com o ID de um modelo de chat suportado no seu painel de Inference Providers (valor inicial de referência: `Qwen/Qwen2.5-7B-Instruct:fastest`; disponibilidade deve ser confirmada na conta).
-4. Execute um novo deploy para que as variáveis sejam aplicadas. Teste uma pergunta no Assistente IA com edital publicado e confira as citações numéricas.
-5. Se aparecer HTTP 402/429, confira os créditos ou limites gratuitos. Não ative cobrança automática sem avaliar os custos.
-Endpoint de integração: `https://router.huggingface.co/v1/chat/completions`, com `Authorization: Bearer HF_TOKEN`, executado somente no servidor.
-
-## Teste rápido da API sem enviar editais
-Após configurar HF_TOKEN, abra `/admin`, faça login e clique em **Testar conexão com a IA**. O endpoint protegido `POST /api/admin/testar-ia` envia uma mensagem mínima ao modelo, retorna status e nome do modelo, sem expor o token. O teste é limitado a 5 chamadas/24h e participa do limite global de 50 chamadas/24h. Se aprovado, valide o caminho completo pelo Assistente IA usando um edital publicado, conferindo resposta e fontes.
-
-## Esqueci a senha administrativa
-Acesse `/admin/recuperar`. Como a senha é armazenada com scrypt, ela não pode ser recuperada: apenas redefinida. O proprietário da Vercel deve criar uma variável criptografada `ADMIN_RECOVERY_CODE` (Preview e Production) com um código aleatório de ao menos 24 caracteres, diferente de `ADMIN_WRITE_KEY` e de quaisquer senhas já usadas, e executar um novo deploy. Informe esse código e a senha nova no formulário. O código só pode ser utilizado uma vez, registrado em `admin_recovery`. Após o uso, a senha anterior deixa de funcionar e todas as sessões antigas são encerradas. O código não é registrado nos logs ou no repositório; o endpoint tem controle de tentativas. Para reutilizar o fluxo, configure um novo código aleatório, publique novamente e repita a operação.
-
-## Diagnóstico e modelo validado (v2)
-- O painel de administração oferece **Validar e selecionar modelo**, protegido por sessão administrativa e limite de tentativas.
-- Ele envia uma pergunta curta aos modelos em sequência. Só tenta o próximo se o serviço indicar incompatibilidade de modelo.
-- O primeiro modelo que responder é gravado em `ai_model_config` no Neon. A API de consultas usa esse modelo validado, sem trocar aleatoriamente em cada pergunta.
-- Os erros retornam categorias sanitizadas (modelo, permissão, cota, formato ou rede), sem tokens ou conteúdo do edital nos logs.
-- O build verifica tipagem e compilação; teste real de inferência exige acionar o diagnóstico com a conta administrativa. Os limites e créditos gratuitos do Hugging Face são definidos pelo provedor.
+## Limitações e segurança
+Este é um projeto acadêmico, não uma plataforma de concursos certificada. Não armazene documentos privados. PDFs digitalizados sem texto não são suportados (sem OCR). A validação de citação é numérica e não garante precisão factual; o edital oficial prevalece. Para lançamento público, complementar com monitoramento de custos, recuperação de conta autenticada por e-mail, quotas por usuário, CAPTCHA, auditoria e política de privacidade.
