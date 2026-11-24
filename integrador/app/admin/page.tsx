@@ -1,4 +1,5 @@
 'use client';
+import AnimatedLogo from '@/components/AnimatedLogo';
 import {useCallback,useEffect,useState} from 'react';
 import {ArrowLeft,ArrowRight,CheckCircle2,KeyRound,LoaderCircle,LogIn,LogOut,ShieldCheck} from 'lucide-react';
 type State={autenticado:boolean;email:string|null;inicializado:boolean};
@@ -72,7 +73,7 @@ export default function AdminPage(){
   finally{setOcupado(false)}
  }
  return <div className="app-shell">
-  <header className="topbar"><a className="wordmark" href="/">edital<span>.fácil</span><small> / ADMINISTRAÇÃO</small></a><a className="outline-btn" href="/"><ArrowLeft size={17}/> Voltar ao sistema</a></header>
+  <header className="topbar"><a className="wordmark edital-logo-animated" href="/" aria-label="Edital Fácil — voltar ao início"><AnimatedLogo adminSuffix="Administração"/></a><a className="outline-btn" href="/"><ArrowLeft size={17}/> Voltar ao sistema</a></header>
   <main className="admin-page">
    <div className="eyebrow"><span className="dot"/> SEGURANÇA DE ACESSO <span className="line"/> PIT 2026</div>
    <h1>ÁREA DO <em>ADMINISTRADOR.</em></h1>

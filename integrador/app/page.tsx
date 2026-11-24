@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import ScribbleNav from '@/components/ScribbleNav';
+import AnimatedLogo from '@/components/AnimatedLogo';
 import BentoMiniCards from '@/components/BentoMiniCards';
 import InteractiveHoverButton from '@/components/InteractiveHoverButton';
 const VectorWordmark=dynamic(()=>import('@/components/VectorWordmark'),{ssr:false});
@@ -121,7 +122,7 @@ export default function Home(){
  return <div className="studio">
   <aside className={'studio-sidebar '+(menuAberto?'mobile-open':'')}>
    <div className="studio-brand">
-    <a href="/" className="studio-logo" aria-label="Edital Fácil, início"><span className="studio-logo-symbol"><FileText size={19}/></span><span>edital<span className="studio-brand-green">.fácil</span><small>AI WORKSPACE</small></span></a>
+    <a href="/" className="studio-logo edital-logo-animated" aria-label="Edital Fácil — voltar ao início"><AnimatedLogo/></a>
     <button type="button" className="studio-mobile-close" onClick={()=>setMenuAberto(false)} aria-label="Fechar menu"><X size={20}/></button>
    </div>
    <div className="studio-sidebar-group"><span className="studio-sidebar-label">ESPAÇO DE TRABALHO</span><ScribbleNav items={areas.filter(a=>a.id!=='cadastro'||isAdmin)} value={area} onSelect={escolher}/></div>

@@ -1,4 +1,5 @@
 'use client';
+import AnimatedLogo from '@/components/AnimatedLogo';
 import { useState } from 'react';
 import { ArrowLeft, CheckCircle2, KeyRound, LoaderCircle } from 'lucide-react';
 export default function RecuperarSenha(){
@@ -21,7 +22,7 @@ export default function RecuperarSenha(){
   finally{setOcupado(false)}
  }
  return <div className="app-shell">
-  <header className="topbar"><a className="wordmark" href="/">edital<span>.fácil</span><small> / RECUPERAÇÃO DE ACESSO</small></a><a className="outline-btn" href="/admin"><ArrowLeft size={16}/> Entrar</a></header>
+  <header className="topbar"><a className="wordmark edital-logo-animated" href="/" aria-label="Edital Fácil — voltar ao início"><AnimatedLogo adminSuffix="Recuperação de acesso"/></a><a className="outline-btn" href="/admin"><ArrowLeft size={16}/> Entrar</a></header>
   <main className="admin-page">
    <div className="eyebrow"><span className="dot"/> RECUPERAÇÃO SEGURA <span className="line"/> ADMINISTRADOR</div>
    <h1>REDEFINIR <em>SENHA.</em></h1>
