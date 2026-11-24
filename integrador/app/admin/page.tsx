@@ -13,6 +13,8 @@ export default function AdminPage(){
  const [erro,setErro]=useState('');
  const [carregando,setCarregando]=useState(true);
  const [ocupado,setOcupado]=useState(false);
+ const [testandoIA,setTestandoIA]=useState(false);
+ const [resultadoIA,setResultadoIA]=useState('');
  const carregar=useCallback(async()=>{
   try{
    const res=await fetch('/api/auth/me',{cache:'no-store'});
@@ -49,6 +51,16 @@ export default function AdminPage(){
   }catch(e){setErro(e instanceof Error?e.message:'Falha ao sair.')}
   finally{setOcupado(false)}
  }
+ async function testarIA(){
+  setErro('');setResultadoIA('');setTestandoIA(true);
+  try{
+   const res=await fetch('/api/admin/testar-ia',{method:'POST',cache:'no-store'});
+   const dados=await res.json();
+   if(!res.ok)throw new Error(dados.erro||'Falha ao consultar o Hugging Face.');
+   setResultadoIA('Teste aprovado! Hugging Face respondeu ao sistema pelo modelo '+dados.modelo+'.');
+  }catch(e){setErro(e instanceof Error?e.message:'Falha no teste.')}
+  finally{setTestandoIA(false)}
+ }
  async function trocarSenha(e:React.FormEvent){
   e.preventDefault();setErro('');setMensagem('');setOcupado(true);
   try{
@@ -73,6 +85,12 @@ export default function AdminPage(){
       <div className="admin-title"><ShieldCheck size={25}/><div><h2>Sessão administrativa ativa</h2><p>{state.email}</p></div></div>
       <p className="helper">Você já pode adicionar, arquivar e excluir editais. A sessão expira em até 12 horas.</p>
       <div className="admin-buttons"><a href="/" className="action">Acessar biblioteca <ArrowRight size={17}/></a><button disabled={ocupado} className="outline-btn" onClick={sair}><LogOut size={17}/> Sair</button></div>
+     </section>
+     <section className="form-card">
+      <div className="admin-title"><ShieldCheck size={24}/><div><h2>Diagnóstico do Hugging Face</h2><p>Teste se o token e o modelo permitem respostas reais da IA.</p></div></div>
+      <p className="helper">O teste envia apenas uma mensagem curta ao modelo. Requer uma cota disponível e não envia seus editais.</p>
+      <button className="action" disabled={testandoIA} onClick={()=>void testarIA()}>{testandoIA?<LoaderCircle className="spin" size={17}/>:<ShieldCheck size={17}/>} Testar conexão com a IA</button>
+      {resultadoIA&&<div className="notice success" role="status"><CheckCircle2 size={17}/>{resultadoIA}</div>}
      </section>
      <section className="form-card">
       <div className="admin-title"><KeyRound size={24}/><h2>Alterar senha</h2></div>

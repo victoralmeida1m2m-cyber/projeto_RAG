@@ -64,3 +64,6 @@ Aceita PDFs com texto selecionável, até 4 MB/150 páginas, sem OCR. Envie apen
 4. Execute um novo deploy para que as variáveis sejam aplicadas. Teste uma pergunta no Assistente IA com edital publicado e confira as citações numéricas.
 5. Se aparecer HTTP 402/429, confira os créditos ou limites gratuitos. Não ative cobrança automática sem avaliar os custos.
 Endpoint de integração: `https://router.huggingface.co/v1/chat/completions`, com `Authorization: Bearer HF_TOKEN`, executado somente no servidor.
+
+## Teste rápido da API sem enviar editais
+Após configurar HF_TOKEN, abra `/admin`, faça login e clique em **Testar conexão com a IA**. O endpoint protegido `POST /api/admin/testar-ia` envia uma mensagem mínima ao modelo, retorna status e nome do modelo, sem expor o token. O teste é limitado a 5 chamadas/24h e participa do limite global de 50 chamadas/24h. Se aprovado, valide o caminho completo pelo Assistente IA usando um edital publicado, conferindo resposta e fontes.
